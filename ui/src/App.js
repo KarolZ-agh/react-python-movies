@@ -1,5 +1,5 @@
 import './App.css';
-import {useState, useEffect} from "react";
+import {useEffect, useState} from "react";
 import "milligram";
 import MovieForm from "./MovieForm";
 import MoviesList from "./MoviesList";
@@ -9,37 +9,38 @@ function App() {
     const [addingMovie, setAddingMovie] = useState(false);
 
     useEffect(() => {
-    const fetchMovies = async () => {
-        const response = await fetch(`/movies`);
-        if (response.ok) {
-            const movies = await response.json();
-            setMovies(movies);
-        }
-    };
-    fetchMovies();
-}, []);
+        const fetchMovies = async () => {
+            const response = await fetch(`/movies`);
+            if (response.ok) {
+                const movies = await response.json();
+                setMovies(movies);
+            }
+        };
+        fetchMovies();
+    }, []);
 
     async function handleAddMovie(movie) {
-      const response = await fetch('/movies', {
-        method: 'POST',
-        body: JSON.stringify(movie),
-        headers: { 'Content-Type': 'application/json' }
-      });
+        const response = await fetch('/movies', {
+            method: 'POST',
+            body: JSON.stringify(movie),
+            headers: {'Content-Type': 'application/json'}
+        });
 
-      if (response.ok) {
-        setMovies([...movies, movie]);
-        setAddingMovie(false);
-      }
+        if (response.ok) {
+            let movieFromResponse = await response.json();
+            setMovies([...movies, movieFromResponse]);
+            setAddingMovie(false);
+        }
     }
 
     async function handleDeleteMovie(movie) {
-      const response = await fetch('/movies/' + movie.id, {
-        method: 'DELETE',
-      });
+        const response = await fetch('/movies/' + movie.id, {
+            method: 'DELETE',
+        });
 
-      if (response.ok) {
-        setMovies(movies.filter(m => m !== movie))
-      }
+        if (response.ok) {
+            setMovies(movies.filter(m => m !== movie))
+        }
     }
 
     return (
